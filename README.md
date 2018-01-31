@@ -94,6 +94,20 @@ android.useDeprecatedNdk=true
 - ~~联系其他库的提供者补全~~
 - ~~如果不行的话，可以利用上面提到的abiFilters来过滤掉本库的so，这样只提供arm一般是可以兼容的。~~
 
+在小米4、锤子 T2 等手机上打开接入了这个库的 app 直接闪退
+
+在小米 4、锤子 T2 等手机上运行我们的 app ，系统会先去找 arm64-v8a 这个目录下的 so 文件，如果不存在还好，偏偏我的 app 存在 arm64-v8a 目录，此时因为找不到目录下无线保镖的 so 文件（前面说过，接入了无线保镖只会引入 armeabi-v7a 和 x86 这两个包的 so 文件），就直接报 java.lang.UnsatisfiedLinkError：couldn't find "libsecuritysdk.so" 的错了
+
+android {
+    ....
+    defaultConfig {
+        ....
+        ndk {
+            abiFilters "x86", "armeabi-v7a"
+        }
+    }
+}
+照上面的配置，那打包时就只会把 "x86", "armeabi-v7a" 这两个目录及其下的 so 文件打包进 apk 。我们的问题也解决了，因为系统也只能找这两个目录下的 so 文件了
 
 # 6. License
 
